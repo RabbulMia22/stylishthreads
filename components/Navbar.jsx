@@ -22,9 +22,12 @@ function Navbar() {
 
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                 {/* Logo */}
+                <Link href="/" className="flex items-center space-x-2">
+                
                 <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     FASHIONHUB
                 </div>
+                </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex flex-1 justify-center space-x-8 items-center">
@@ -61,7 +64,7 @@ function Navbar() {
                                 placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full px-4 py-2 pl-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-2 pl-10 text-sm border border-gray-300 rounded-full placeholder:text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                         </div>
@@ -128,7 +131,7 @@ function Navbar() {
                                         placeholder="Search products..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg placeholder:bg-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                     <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                                 </div>
