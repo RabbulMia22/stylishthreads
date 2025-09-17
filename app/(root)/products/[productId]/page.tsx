@@ -3,9 +3,20 @@ import React from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import products from "../../../../data/product"; 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { addToCart } from "@/store/slices/cartSlice";
+
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+}
+
 export default function ProductDetails() {
   const params = useParams();
   const { productId } = params;
+  const dispatch = useDispatch<AppDispatch>();
 
   // find product by id
   const product = products.find((p) => p.id === productId);
@@ -82,7 +93,9 @@ export default function ProductDetails() {
 
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
-          <button className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800">
+          <button 
+          onClick={() => dispatch(addToCart(product as any))}
+          className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800">
             Add to Cart
           </button>
          

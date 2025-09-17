@@ -6,12 +6,17 @@ import { FiMenu, FiX, FiUser, FiHeart, FiShoppingCart, FiSearch, FiHeadphones } 
 import { motion, AnimatePresence } from "framer-motion";
 import Shops from "./Shops";
 import Products from "./Products";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const toggleDrawer = () => setIsOpen(!isOpen);
+    const cartItem = useSelector((state) => state.cart.items);
 
     return (
         <nav className="w-full bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 z-50">
@@ -50,6 +55,10 @@ function Navbar() {
                         New Arrivals
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
                     </Link>
+                    <Link href="/dashboard/admindashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300 relative group">
+                        Admin Dashboard
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+                    </Link>
 
 
                 </div>
@@ -85,8 +94,14 @@ function Navbar() {
 
                     {/* Cart */}
                     <div className="relative flex items-center text-gray-600 hover:text-blue-600 cursor-pointer">
-                        <FiShoppingCart size={20} className="mr-1" />
-
+                        <Link href="/cart">
+                            <FiShoppingCart size={20} className="mr-1" />
+                        </Link>
+                        {cartItem.length > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                                {cartItem.length}
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -131,7 +146,7 @@ function Navbar() {
                                         placeholder="Search products..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg placeholder:bg-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg placeholder:text-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                     <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                                 </div>
