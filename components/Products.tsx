@@ -7,12 +7,13 @@ import { IoWalk, IoFootsteps } from "react-icons/io5";
 import { GiLargeDress } from "react-icons/gi";
 import { FaTshirt, FaChild } from "react-icons/fa";
 
-function Shops() {
-  const menuItems = [
-    { label: "Man", link: "/man", icon: <IoIosMan className="text-blue-500" /> },
-    { label: "Woman", link: "/woman", icon: <IoIosWoman className="text-pink-500" /> },
-    { label: "Kids", link: "/kids", icon: <FaChild className="text-green-500" /> },
-   
+function Products() {
+  const menuItems = [  
+    { label: "Shoes", link: "/shoes", icon: <IoFootsteps className="text-purple-500" /> },
+    { label: "T-Shirts", link: "/tshirts", icon: <FaTshirt className="text-red-500" /> },
+    { label: "Pants", link: "/pants", icon: <IoIosBody className="text-indigo-500" /> },
+    { label: "Dresses", link: "/dresses", icon: <GiLargeDress className="text-rose-500" /> },
+    { label: "Accessories", link: "/accessories", icon: <IoIosShirt className="text-amber-500" /> },
   ];
 
   const [open, setOpen] = useState(false);
@@ -47,7 +48,7 @@ function Shops() {
     >
       {/* Desktop: Shop Text */}
       <span className="text-gray-800  transition-colors duration-200 font-medium px-3 py-2 rounded-lg cursor-default hidden md:inline-flex items-center hover:text-blue-600">
-        Shop
+        Product
         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
         
       </span>
@@ -59,7 +60,7 @@ function Shops() {
         className="flex items-center justify-between w-full md:hidden gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors duration-200"
         aria-expanded={open}
       >
-        <span className="text-gray-800 font-medium">Shop</span>
+        <span className="text-gray-800 font-medium">Product</span>
         <IoIosArrowDown
           className={`text-gray-800 transition-transform duration-300 ${
             open ? "rotate-180" : ""
@@ -90,7 +91,7 @@ function Shops() {
                     <IoIosShirt className="text-blue-600 text-xl" />
                   </div>
                   <div className="ml-3">
-                    <h3 className="font-semibold text-gray-800">Shop Categories</h3>
+                    <h3 className="font-semibold text-gray-800">Products Categories</h3>
                     <p className="text-xs text-gray-500">Browse our collections</p>
                   </div>
                 </div>
@@ -162,4 +163,4 @@ function Shops() {
   );
 }
 
-export default Shops;
+export default Products;
