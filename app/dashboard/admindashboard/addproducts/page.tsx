@@ -1,7 +1,11 @@
 "use client";
 
-import React from "react";
-import { useForm } from "react-hook-form";
+import ImageUploadComponent from "@/components/ImageUploadComponent";
+import { useImageUpload } from "@/hook/useImageUpload";
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import axios, {AxiosResponse} from "axios";
+import { log } from "console";
 
 interface ProductFormData {
   title: string;
@@ -21,19 +25,46 @@ function AddProductsPage() {
     handleSubmit,
     reset,
     formState: { errors },
+    control
   } = useForm<ProductFormData>();
+  const [url, setUrl] = useState("");
+  const { fileInputRef, progress, uploadedUrl, handleUpload } = useImageUpload();
 
-  const onSubmit = (data: ProductFormData) => {
-    console.log("Form Data:", data);
-    // Send data to your API here
-    reset();
-  };
+
+ const onSubmit = async (data: ProductFormData) => {
+  console.log("Form Data:", data);
+  try {
+   const imagesArray = Array.isArray(uploadedUrl)
+  ? uploadedUrl.filter((url) => url) 
+  : uploadedUrl
+    ? [uploadedUrl]
+    : [];
+
+if (imagesArray.length === 0) {
+  alert("Please upload at least one image before submitting.");
+  return;
+}
+    const productData = {
+      ...data,
+      id: Date.now().toString(), 
+      price: Number(data.price),
+      rating: Number(data.rating),
+      images: imagesArray,
+    };
+    console.log(productData);
+    const response: AxiosResponse<any> = await axios.post("/api/products", productData);
+    console.log("Product added:", response.data);
+    alert("Product added successfully!");
+  } catch (error) {
+    console.error("Error adding product:", error);
+  }
+};
 
   const inputClasses =
     "w-full border p-2 rounded text-black placeholder-black";
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md mt-6">
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md mt-">
       <h1 className="text-2xl font-bold mb-6 text-black">Add Product</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Title */}
@@ -121,12 +152,38 @@ function AddProductsPage() {
         {/* Images */}
         <div>
           <label className="block font-medium mb-1 text-black">Images</label>
-          <input
-            type="file"
-            {...register("images")}
-            multiple
-            className={inputClasses}
-          />
+          <div>
+            <Controller
+              name="images"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="file"
+                  ref={(e) => {
+                    field.ref(e);
+                    fileInputRef.current = e;
+                  }}
+                  onChange={(e) => field.onChange(e.target.files)}
+                  multiple
+                />
+              )}
+            />
+            <button
+              type="button"
+              onClick={async (e) => {
+                e.preventDefault();
+                await handleUpload();
+              }}
+              className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 mt-2"
+            >
+              Upload
+            </button>
+            <div>
+              Progress: <progress value={progress} max={100}></progress>
+            </div>
+            {uploadedUrl && <img src={uploadedUrl} alt="Uploaded" className="w-40 mt-2" />}
+          </div>
+          {errors.images && <p className="text-red-500">{errors.images.message}</p>}
         </div>
 
         {/* Rating */}

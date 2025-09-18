@@ -8,7 +8,7 @@ interface TopbarProps {
 
 function Topbar({ openMobileMenu, setopenMobileMenu }: TopbarProps) {
   return (
-    <div className="bg-white shadow-md p-4 flex items-center justify-between relative">
+    <div className="bg-white  shadow-md p-4 flex items-center justify-between relative">
       {/* Mobile Menu Icon */}
       <div className="md:hidden absolute left-4 top-1/2 -translate-y-1/2">
         {!openMobileMenu && (

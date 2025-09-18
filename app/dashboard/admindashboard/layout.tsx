@@ -16,7 +16,7 @@ interface SidebarProps {
 function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex ">
+    <div className="flex min-h-screen">
       {/* Sidebar (left) */}
       <Sidebar openMobileMenu={sidebarOpen} setopenMobileMenu={setSidebarOpen} />
 
@@ -26,7 +26,7 @@ function AdminLayout({ children }: AdminLayoutProps) {
         <Topbar openMobileMenu={sidebarOpen} setopenMobileMenu={setSidebarOpen} />
 
         {/* Page content */}
-        <main className="flex-1 p-6 bg-gra-50">{children}</main>
+        <main className="flex-1 p-6 bg-gra-50 ">{children}</main>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import products from "../../../../data/product"; 
@@ -8,18 +8,27 @@ import { AppDispatch } from "@/store/store";
 import { addToCart } from "@/store/slices/cartSlice";
 
 interface Product {
-  id: number;
+  id: string;
   title: string;
+  description: string;
   price: number;
+  category: string;
+  subcategory: string;
+  sizes: string[];
+  colors: string[];
+  images: string[];
+  rating: number;
+  featured: boolean;
 }
 
 export default function ProductDetails() {
   const params = useParams();
   const { productId } = params;
   const dispatch = useDispatch<AppDispatch>();
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
-  // find product by id
-  const product = products.find((p) => p.id === productId);
+  // Convert productId to string and match with product.id
+  const product = products.find((p) => p.id === String(productId));
 
   if (!product) {
     return (
@@ -28,6 +37,22 @@ export default function ProductDetails() {
       </div>
     );
   }
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please select a size before adding to cart.");
+      return;
+    }
+
+    // Map product to CartItem-compatible object
+    dispatch(addToCart({
+      id: Number(product.id),      // CartItem expects number
+      title: product.title,
+      price: product.price,
+      images: product.images,
+      selectedSize: selectedSize
+    }));
+  };
 
   return (
     <section className="max-w-7xl mx-auto px-6 mt-24 py-12 grid md:grid-cols-2 gap-10">
@@ -68,7 +93,10 @@ export default function ProductDetails() {
             {product.sizes.map((size) => (
               <button
                 key={size}
-                className="border rounded-md px-4 py-2 hover:bg-gray-100 text-black"
+                onClick={() => setSelectedSize(size)}
+                className={`border rounded-md px-4 py-2 hover:bg-gray-100 text-black ${
+                  selectedSize === size ? "bg-gray-200 font-bold" : ""
+                }`}
               >
                 {size}
               </button>
@@ -94,11 +122,11 @@ export default function ProductDetails() {
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
           <button 
-          onClick={() => dispatch(addToCart(product as any))}
-          className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800">
+            onClick={handleAddToCart}
+            className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800"
+          >
             Add to Cart
           </button>
-         
         </div>
       </div>
     </section>

@@ -1,4 +1,3 @@
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface CartItem {
@@ -6,8 +5,10 @@ export interface CartItem {
     title: string;
     price: number;
     quantity: number;
-    image: string;
-};
+     images: string[];
+    selectedSize: number | string;
+}
+
 interface CartState {
     items: CartItem[];
     totalAmount: number;
@@ -18,34 +19,42 @@ const initialState: CartState = {
     totalAmount: 0,
 };
 
-        const cartSlice = createSlice({
-            name: "cart",
-            initialState,
-            reducers: {
-                addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
-        const item = action.payload;
-        const existing = state.items.find(i => i.id === item.id);
+const cartSlice = createSlice({
+    name: "cart",
+    initialState,
+    reducers: {
+        addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
+            const item = action.payload;
 
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            state.items.push({
-            ...item,
-            quantity: 1,
-            price: Number(item.price) 
-            });
-        }
+            // check if the same product with the same size exists
+            const existing = state.items.find(
+                i => i.id === item.id && i.selectedSize === item.selectedSize
+            );
 
-        state.totalAmount += Number(item.price);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                state.items.push({
+                    ...item,
+                    quantity: 1,
+                    price: Number(item.price),
+                });
+            }
+
+            state.totalAmount += Number(item.price);
         },
-        removeFromCart: (state, action: PayloadAction<number>) => {
-            const index = state.items.findIndex(item => item.id === action.payload);
+
+        removeFromCart: (state, action: PayloadAction<{ id: number; selectedSize: string }>) => {
+            const index = state.items.findIndex(
+                item => item.id === action.payload.id && item.selectedSize === action.payload.selectedSize
+            );
             if (index !== -1) {
                 const item = state.items[index];
                 state.totalAmount -= item.price * item.quantity;
                 state.items.splice(index, 1);
             }
         },
+
         clearCart: (state) => {
             state.items = [];
             state.totalAmount = 0;
