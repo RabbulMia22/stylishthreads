@@ -2,11 +2,18 @@
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { clearCart, removeFromCart } from "@/store/slices/cartSlice";
+import { clearCart, removeFromCart, fetchCart } from "@/store/slices/cartSlice";
+import { useEffect } from "react";
+;
 
 export default function CartPage() {
   const { items, totalAmount } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
+  console.log("images", items);
 
   return (
     <div className="max-w-6xl mx-auto p-6 mt-24">
@@ -22,19 +29,37 @@ export default function CartPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="md:col-span-2 space-y-4">
-            {items.map((item:any) => (
+            {items.map((item: any, index: number) => (
               <div
-                key={item.id}
+                key={index}
                 className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center gap-4">
+                  {Array.isArray(item.images) && item.images.length > 0 ? (
                     <Image
                       src={item.images[0]}
-                      alt={item.title}
+                      alt={`Image of ${item.title}`}
                       width={80}
                       height={80}
                       className="rounded object-cover"
                     />
+                  ) : item.product && Array.isArray(item.product.images) && item.product.images.length > 0 ? (
+                    <Image
+                      src={item.product.images[0]}
+                      alt={`Image of ${item.product.title}`}
+                      width={80}
+                      height={80}
+                      className="rounded object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={"/file.svg"}
+                      alt={`No image available for ${item.title}`}
+                      width={80}
+                      height={80}
+                      className="rounded object-cover"
+                    />
+                  )}
                   <div>
                     <p className="font-medium text-gray-800">{item.title}</p>
                     <p className="text-gray-500 text-sm">
@@ -46,11 +71,12 @@ export default function CartPage() {
                   </div>
                 </div>
                 <button
+                  onClick={() => dispatch(removeFromCart({ id: item.id, selectedSize: item.selectedSize }))}
                   className="text-red-500 hover:text-red-700 font-medium"
-                  onClick={() => dispatch(removeFromCart(item.id))}
                 >
                   Remove
                 </button>
+
               </div>
             ))}
           </div>
@@ -73,9 +99,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors"
-              >
+              <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors">
                 Checkout
               </button>
             </div>

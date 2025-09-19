@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import products from "../../../../data/product"; 
+import products from "../../../../data/product";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { addToCart } from "@/store/slices/cartSlice";
+import useAxios from "@/hook/useAxios";
+import axiosSecure from "@/hook/useAxios";
 
 interface Product {
   id: string;
@@ -26,6 +28,7 @@ export default function ProductDetails() {
   const { productId } = params;
   const dispatch = useDispatch<AppDispatch>();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  
 
   // Convert productId to string and match with product.id
   const product = products.find((p) => p.id === String(productId));
@@ -38,33 +41,51 @@ export default function ProductDetails() {
     );
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedSize) {
       alert("Please select a size before adding to cart.");
       return;
     }
 
-    // Map product to CartItem-compatible object
-    dispatch(addToCart({
-      id: Number(product.id),      // CartItem expects number
-      title: product.title,
-      price: product.price,
-      images: product.images,
-      selectedSize: selectedSize
-    }));
+    try {
+      await axiosSecure.post("/cart");
+
+      const res = await axiosSecure.post("/cart/add", {
+        productId: product.id,
+        quantity: 1,
+        size: selectedSize,
+        image: product.images,
+        userId: null, // Assuming userId is handled server-side via cookies
+      })
+      console.log("Cart updated:", res.data);
+
+      dispatch(addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        images: product.images,
+        selectedSize: selectedSize
+
+      }));
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+
   };
 
   return (
     <section className="max-w-7xl mx-auto px-6 mt-24 py-12 grid md:grid-cols-2 gap-10">
       {/* Left - Product Image */}
       <div className="flex justify-center items-start">
-        <Image
-          src={product.images[0]}
-          alt={product.title}
-          width={500}
-          height={600}
-          className="rounded-lg shadow-lg object-cover"
-        />
+       
+          <Image
+            src={product.images[0]}
+            alt={`${product.title} image`}
+            width={200}
+            height={250}
+            className="rounded-lg shadow-lg object-cover"
+          />
+        
       </div>
 
       {/* Right - Product Info */}
@@ -94,9 +115,8 @@ export default function ProductDetails() {
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
-                className={`border rounded-md px-4 py-2 hover:bg-gray-100 text-black ${
-                  selectedSize === size ? "bg-gray-200 font-bold" : ""
-                }`}
+                className={`border rounded-md px-4 py-2 hover:bg-gray-100 text-black ${selectedSize === size ? "bg-gray-200 font-bold" : ""
+                  }`}
               >
                 {size}
               </button>
@@ -121,7 +141,7 @@ export default function ProductDetails() {
 
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
-          <button 
+          <button
             onClick={handleAddToCart}
             className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800"
           >

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import ImageKit from "imagekit";
-import Product from "@/models/products";
+import Product from "@/models/Product";
 import { dbConnect } from "@/lib/db";
 
 // Initialize ImageKit

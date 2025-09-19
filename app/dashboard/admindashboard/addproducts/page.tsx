@@ -1,11 +1,9 @@
 "use client";
 
-import ImageUploadComponent from "@/components/ImageUploadComponent";
 import { useImageUpload } from "@/hook/useImageUpload";
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import axios, {AxiosResponse} from "axios";
-import { log } from "console";
 
 interface ProductFormData {
   title: string;
@@ -27,12 +25,12 @@ function AddProductsPage() {
     formState: { errors },
     control
   } = useForm<ProductFormData>();
-  const [url, setUrl] = useState("");
+  
   const { fileInputRef, progress, uploadedUrl, handleUpload } = useImageUpload();
 
 
  const onSubmit = async (data: ProductFormData) => {
-  console.log("Form Data:", data);
+  
   try {
    const imagesArray = Array.isArray(uploadedUrl)
   ? uploadedUrl.filter((url) => url) 
